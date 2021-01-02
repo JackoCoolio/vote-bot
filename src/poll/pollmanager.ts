@@ -37,7 +37,7 @@ export class PollManager {
     getPoll(id: string) {
         return this.polls.get(id);
     }
-    
+
     /**
      * Returns a list of all active Polls.
      * 

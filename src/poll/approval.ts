@@ -35,10 +35,10 @@ export class ApprovalPoll extends Poll {
         embed.setTitle(`Results for **${this.title}**`)
             .setAuthor('Vote Bot')
             .setColor('#ffff00');
-        
+
         this.counts.forEach((voters, option) => {
             embed.addField(`${option}: ${voters.length} vote${voters.length == 1 ? '' : 's'}`, '\u200b');
-        }); 
+        });
 
         return embed;
     }

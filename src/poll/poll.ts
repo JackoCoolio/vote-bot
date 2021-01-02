@@ -48,8 +48,6 @@ export abstract class Poll {
         this.resultsMessage = message;
     }
 
-    // TODO: populateReactions()
-    // make sure that we don't delete our own reaction!
     populateReactions(message: Message) {
         console.log(message.reactions.cache);
         for (let i = 0; i < this.options.length; i++) {

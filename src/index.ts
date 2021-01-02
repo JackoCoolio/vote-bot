@@ -22,7 +22,7 @@ client.on('ready', () => {
 client.on('message', msg => {
 
     if (msg.author.bot) return;
-    
+
     commandManager.setState({
         pollManager: pollManager
     });
