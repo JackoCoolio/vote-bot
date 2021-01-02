@@ -55,7 +55,7 @@ export abstract class Poll {
         }
     }
 
-    protected addOptionFields(embed: MessageEmbed): MessageEmbed {
+    addOptionFields(embed: MessageEmbed): MessageEmbed {
 
         for (let i = 0; i < this.options.length; i++) {
             embed.addField(`${convertNumberToEmoji(i)} ${this.options[i]}`, '\u200b');
@@ -64,7 +64,7 @@ export abstract class Poll {
         return embed;
     }
 
-    abstract buildPollEmbed(id: string): void;
+    abstract buildPollEmbed(): MessageEmbed;
 
     abstract buildResultsEmbed(): MessageEmbed;
 

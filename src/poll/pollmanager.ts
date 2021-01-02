@@ -1,4 +1,4 @@
-import { MessageReaction, PartialUser, User } from "discord.js";
+import { MessageEmbed, MessageReaction, PartialUser, User } from "discord.js";
 import { Poll } from "./poll";
 
 /**
@@ -75,7 +75,7 @@ export class PollManager {
         }
 
         const embed = message.embeds[0];
-        const id = embed.footer.text;
+        const id = embed.footer.text.split(' ')[1];
 
         if (!this.polls.has(id)) {
             message.channel.send(`Couldn't register a vote from <@${message.author.id}>!\nPoll **${id}** doesn't exist!`).then(res => {
@@ -93,6 +93,23 @@ export class PollManager {
 
         // pass reaction to the poll
         poll.onReactionAdd(message, messageReaction, user.id);
+
+    }
+
+    buildPollEmbed(id: string): MessageEmbed {
+
+        const poll = this.getPoll(id);
+
+        if (!poll) return undefined;
+
+        const embed = poll.buildPollEmbed();
+
+        poll.addOptionFields(embed);
+
+        embed.setFooter(`ID: ${id}`)
+            .setAuthor('Vote Bot');
+        
+        return embed;
 
     }
 

@@ -15,16 +15,12 @@ export class ApprovalPoll extends Poll {
         }
     }
 
-    buildPollEmbed(id: string): MessageEmbed {
+    buildPollEmbed(): MessageEmbed {
         const embed = new MessageEmbed();
 
         embed.setTitle(this.title)
-            .setDescription('React to this message to vote! Vote for as many as you want. Use `v!results id:' + id + '` to get the results of this poll!')
-            .setAuthor('Vote Bot')
-            .setFooter(id)
+            .setDescription('Vote for as many options as you want.')
             .setColor('#ffff00');
-
-        this.addOptionFields(embed);
 
         return embed;
     }

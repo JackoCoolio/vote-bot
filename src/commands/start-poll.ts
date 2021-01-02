@@ -82,7 +82,7 @@ export function StartPollCommand(state: CommandState): void {
 
             const id = pollManager.addPoll(poll);
 
-            const embed = poll.buildPollEmbed(id);
+            const embed = pollManager.buildPollEmbed(id);
 
             message.channel.send(embed).then(embedMessage => {
                 poll.populateReactions(embedMessage);
