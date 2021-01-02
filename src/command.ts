@@ -154,6 +154,8 @@ export class CommandManager {
                     parameters.set(currentKey, parseResults.elements);
                     currentKey = '';
                     currentValue = '';
+
+                    mode = 'key';
                 } else {
                     currentValue += char;
                 }
