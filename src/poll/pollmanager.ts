@@ -1,3 +1,4 @@
+import { MessageReaction, PartialUser, User } from "discord.js";
 import { Poll } from "./poll";
 
 /**
@@ -8,27 +9,24 @@ export class PollManager {
     /**
      * The currently running Polls.
      */
-    private polls: Map<string, Poll>;
+    private polls: Map<string, Poll> = new Map<string, Poll>();
 
     /**
      * The now-inactive Polls.
      */
-    private inactivePolls: Map<string, Poll>;
-
-    /**
-     * Constructs a new PollManager with an empty array of Polls.
-     */
-    constructor() {
-        this.polls = new Map<string, Poll>();
-    }
+    private inactivePolls: Map<string, Poll> = new Map<string, Poll>();
 
     /**
      * Adds a Poll to the list of active Polls.
      * 
      * @param poll the Poll to add
+     * 
+     * @returns the ID of the Poll
      */
-    addPoll(poll: Poll) {
-        this.polls.set(this.generateID(), poll);
+    addPoll(poll: Poll): string {
+        const id = this.generateID();
+        this.polls.set(id, poll);
+        return id;
     }
 
     /**
@@ -56,6 +54,46 @@ export class PollManager {
      */
     getInactivePolls() {
         return this.inactivePolls;
+    }
+
+    onReactionAdd(messageReaction: MessageReaction, user: User | PartialUser): void {
+        const message = messageReaction.message;
+
+        if (message.author.id != message.client.user.id) return;
+
+        // ignore bot reactions
+        if (user.bot) return;
+
+        if (message.embeds.length != 1) {
+            message.channel.send(`Couldn't register a vote from <@${message.author.id}>!`).then(res => {
+                setTimeout(() => {
+                    res.delete().catch(console.error);
+                }, 5000);
+            }).catch(console.error);
+
+            return;
+        }
+
+        const embed = message.embeds[0];
+        const id = embed.footer.text;
+
+        if (!this.polls.has(id)) {
+            message.channel.send(`Couldn't register a vote from <@${message.author.id}>!\nPoll **${id}** doesn't exist!`).then(res => {
+                setTimeout(() => {
+                    res.delete().catch(console.error);
+                }, 5000);
+            }).catch(console.error);
+
+            return;
+        }
+
+        console.log(`Someone voted on a poll with ID ${id}`);
+
+        const poll = this.polls.get(id);
+
+        // pass reaction to the poll
+        poll.onReactionAdd(message, messageReaction, user.id);
+
     }
 
     /**
