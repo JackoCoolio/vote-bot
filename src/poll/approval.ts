@@ -9,8 +9,12 @@ export class ApprovalPoll extends Poll {
     constructor(title: string, options: Array<string>) {
         super(title, options);
 
+        this.clearCounts();
+    }
+
+    private clearCounts(): void {
         this.counts = new Map<string, Array<string>>();
-        for (const option of options) {
+        for (const option of this.options) {
             this.counts.set(option, []);
         }
     }
@@ -51,17 +55,23 @@ export class ApprovalPoll extends Poll {
     }
 
     onReactionAdd(message: Message, messageReaction: MessageReaction, userID: string): void {
-        const num = convertEmojiToNumber(messageReaction.emoji.name);
+
+        if (this.isTrashEmoji(messageReaction)) {
+            // clear counts
+            this.clearCounts();
+        } else {
+            const num = convertEmojiToNumber(messageReaction.emoji.name);
+    
+            if (num === undefined || num >= this.options.length) return;
+    
+            if (this.counts.get(this.options[num]).includes(userID)) return;
+    
+            this.counts.get(this.options[num]).push(userID);
+        }
 
         message.guild.members.fetch(userID).then(user => {
             messageReaction.users.remove(user);
         }).catch(console.error);
-
-        if (num === undefined || num >= this.options.length) return;
-
-        if (this.counts.get(this.options[num]).includes(userID)) return;
-
-        this.counts.get(this.options[num]).push(userID);
 
         if (this.resultsMessage) {
             this.resultsMessage.edit(this.buildResultsEmbed()).catch(console.error);
