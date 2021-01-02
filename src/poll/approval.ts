@@ -1,4 +1,4 @@
-import { Message, MessageEmbed, MessageReaction, PartialUser, User } from "discord.js";
+import { Message, MessageEmbed, MessageReaction } from "discord.js";
 import { Poll } from "./poll";
 import { convertEmojiToNumber } from '../tools';
 
@@ -64,9 +64,10 @@ export class ApprovalPoll extends Poll {
     
             if (num === undefined || num >= this.options.length) return;
     
-            if (this.counts.get(this.options[num]).includes(userID)) return;
+            if (!this.counts.get(this.options[num]).includes(userID)) {
+                this.counts.get(this.options[num]).push(userID);
+            }
     
-            this.counts.get(this.options[num]).push(userID);
         }
 
         message.guild.members.fetch(userID).then(user => {

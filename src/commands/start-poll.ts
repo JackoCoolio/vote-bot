@@ -1,4 +1,3 @@
-import { Client, Message } from "discord.js";
 import { CommandState } from "../command";
 import { ApprovalPoll } from "../poll/approval";
 import { PollManager } from '../poll/pollmanager';

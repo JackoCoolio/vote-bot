@@ -107,7 +107,8 @@ export class PollManager {
         poll.addOptionFields(embed);
 
         embed.setFooter(`ID: ${id}`)
-            .setAuthor('Vote Bot');
+            .setAuthor('Vote Bot')
+            .setDescription(embed.description + '\n\nUse 🗑️ to clear your vote(s).\n');
         
         return embed;
 

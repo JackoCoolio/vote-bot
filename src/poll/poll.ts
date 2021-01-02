@@ -1,4 +1,4 @@
-import { Client, Message, MessageEmbed, MessageReaction, PartialUser, User } from 'discord.js';
+import { Message, MessageEmbed, MessageReaction } from 'discord.js';
 import { convertNumberToEmoji } from '../tools';
 
 /**
@@ -60,7 +60,7 @@ export abstract class Poll {
     addOptionFields(embed: MessageEmbed): MessageEmbed {
 
         for (let i = 0; i < this.options.length; i++) {
-            embed.addField(`${convertNumberToEmoji(i)} ${this.options[i]}`, '\u200b');
+            embed.addField(`${convertNumberToEmoji(i)}    ${this.options[i]}`, '\u200b');
         }
 
         return embed;
