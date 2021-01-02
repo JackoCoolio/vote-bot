@@ -1,6 +1,9 @@
 import { Client, Message } from "discord.js";
+import { CommandState } from "../command";
 
-export function StartPollCommand(client: Client, message: Message, parameters: Map<string, string | Array<string>>): void {
+export function StartPollCommand(state: CommandState): void {
+
+    const { client, message, parameters } = state;
 
     if (!parameters.has('title') || parameters.get('title').length == 0) {
         message.channel.send('You must specify a title for the poll!').then(res => {
@@ -39,6 +42,20 @@ export function StartPollCommand(client: Client, message: Message, parameters: M
             }, 5000);
         }).catch(console.error);
         
+        return;
+    }
+
+    const type = parameters.get('type');
+
+    if (typeof type != 'string') {
+        message.channel.send('You must specify the type of poll to run!').then(res => {
+            message.delete().catch(console.error);
+
+            setTimeout(() => {
+                res.delete().catch(console.error);
+            }, 5000);
+        }).catch(console.error);
+
         return;
     }
 

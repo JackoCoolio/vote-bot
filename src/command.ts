@@ -1,7 +1,13 @@
 import { Client, Message } from 'discord.js';
-import { getEffectiveTypeParameterDeclarations } from 'typescript';
 
-export type CommandCallbackFunction = (client: Client, message: Message, parameters: Map<string, string | Array<string>>) => void;
+export interface CommandState {
+    client: Client;
+    message: Message;
+    parameters: Map<string, string | Array<string>>;
+    [key: string]: any;
+}
+
+export type CommandCallbackFunction = (state: CommandState) => void;
 
 /**
  * Parses Discord messages for commands.
@@ -19,6 +25,11 @@ export class CommandManager {
     prefix: string;
 
     /**
+     * The state to pass to commands.
+     */
+    state: object;
+
+    /**
      * Constructs a new CommandManager with an empty Map.
      * 
      * @param prefix the prefix that must precede every command
@@ -26,6 +37,24 @@ export class CommandManager {
     constructor(prefix: string) {
         this.prefix = prefix;
         this.commands = new Map<string, CommandCallbackFunction>();
+    }
+
+    /**
+     * Sets the state object that is passed for every command.
+     * 
+     * @param state the state object
+     */
+    setState(state: object): void {
+        this.state = state;
+    }
+
+    /**
+     * Returns the current state object.
+     * 
+     * @returns an object
+     */
+    getState(): object {
+        return this.state;
     }
 
     /**
@@ -157,8 +186,16 @@ export class CommandManager {
         parameters.forEach((val, key) => {
             if (key == '')
                 cleanParameters.delete(key);
-        })
-        this.commands.get(command)(client, message, cleanParameters)
+        });
+
+        let commandState: CommandState = {
+            client: client,
+            message: message,
+            parameters: cleanParameters,
+            ...this.state
+        }
+
+        this.commands.get(command)(commandState);
 
         return true;
 
