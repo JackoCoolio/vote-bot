@@ -12,10 +12,16 @@ export class ApprovalPoll extends Poll {
         this.clearCounts();
     }
 
-    private clearCounts(): void {
-        this.counts = new Map<string, Array<string>>();
-        for (const option of this.options) {
-            this.counts.set(option, []);
+    private clearCounts(id?: string): void {
+        if (id) {
+            for (const option of this.options) {
+                this.counts.set(option, this.counts.get(option).filter(v => v != id));
+            }
+        } else {
+            this.counts = new Map<string, Array<string>>();
+            for (const option of this.options) {
+                this.counts.set(option, []);
+            }
         }
     }
 
@@ -58,7 +64,7 @@ export class ApprovalPoll extends Poll {
 
         if (this.isTrashEmoji(messageReaction)) {
             // clear counts
-            this.clearCounts();
+            this.clearCounts(userID);
         } else {
             const num = convertEmojiToNumber(messageReaction.emoji.name);
     
