@@ -75,7 +75,7 @@ export class CommandManager {
      * @param message the Message to be parsed
      * @param client the discord.js Client
      * 
-     * @returns true if the command exists, false otherwise
+     * @returns true if the command exists or isn't a command, false otherwise
      */
     parse(message: Message, client: Client): boolean {
 
@@ -94,7 +94,7 @@ export class CommandManager {
             }
         */
 
-        if (!message.content.toLowerCase().startsWith(this.prefix.toLowerCase())) return;
+        if (!message.content.toLowerCase().startsWith(this.prefix.toLowerCase())) return true;
 
         // don't need to worry about leading whitespace, because Discord removes automatically
         const command = message.content.split(' ')[0].substring(this.prefix.length);
