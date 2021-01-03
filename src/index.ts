@@ -10,12 +10,17 @@ import { PollManager } from './poll/pollmanager';
 const client = new Discord.Client();
 
 const commandManager = new CommandManager('v!');
-const pollManager = new PollManager();
+
+const pollManagers = new Map<string, PollManager>();
 
 commandManager.registerCommand(['startpoll', 'start'], StartPollCommand);
 commandManager.registerCommand('results', ResultsCommand);
 
 client.on('ready', () => {
+    client.guilds.cache.forEach(guild => {
+        pollManagers.set(guild.id, new PollManager());
+    });
+
     console.log('Vote bot online.');
 });
 
@@ -24,7 +29,7 @@ client.on('message', msg => {
     if (msg.author.bot) return;
 
     commandManager.setState({
-        pollManager: pollManager
+        pollManager: pollManagers.get(msg.guild.id)
     });
 
     // if the command wasn't found send an error message
@@ -35,7 +40,7 @@ client.on('message', msg => {
 });
 
 client.on('messageReactionAdd', (reaction, user) => {
-    pollManager.onReactionAdd(reaction, user);
+    pollManagers.get(reaction.message.guild.id).onReactionAdd(reaction, user);
 });
 
 client.login(process.env.TOKEN);
