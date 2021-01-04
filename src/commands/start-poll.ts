@@ -1,6 +1,8 @@
 import { CommandState } from "../command";
 import { ApprovalPoll } from "../poll/approval";
+import { SimplePoll } from '../poll/simple';
 import { PollManager } from '../poll/pollmanager';
+import { Poll } from "../poll/poll";
 
 export function StartPollCommand(state: CommandState): void {
 
@@ -60,32 +62,31 @@ export function StartPollCommand(state: CommandState): void {
         return;
     }
 
+    if (!(state.pollManager instanceof PollManager)) {
+        message.channel.send('There was an issue creating the poll!').then(res => {
+            message.delete().catch(console.error);
+
+            setTimeout(() => {
+                res.delete().catch(console.error);
+            }, 5000);
+        }).catch(console.error);
+
+        return;
+    }
+
+    const pollManager = state.pollManager as PollManager;
+
+    var poll: Poll;
+
     switch (type) {
         case 'approval':
 
-            if (!(state.pollManager instanceof PollManager)) {
-                message.channel.send('There was an issue creating the poll!').then(res => {
-                    message.delete().catch(console.error);
+            poll = new ApprovalPoll(title, options);
 
-                    setTimeout(() => {
-                        res.delete().catch(console.error);
-                    }, 5000);
-                }).catch(console.error);
-
-                return;
-            }
-
-            const pollManager = state.pollManager as PollManager;
-
-            const poll = new ApprovalPoll(title, options);
-
-            const id = pollManager.addPoll(poll);
-
-            const embed = pollManager.buildPollEmbed(id);
-
-            message.channel.send(embed).then(embedMessage => {
-                poll.populateReactions(embedMessage);
-            }).catch(console.error);
+            break;
+        case 'simple':
+            
+            poll = new SimplePoll(title, options);
 
             break;
         default:
@@ -98,6 +99,18 @@ export function StartPollCommand(state: CommandState): void {
             }).catch(console.error);
 
             break;
+    }
+
+    if (poll) {
+
+        const id = pollManager.addPoll(poll);
+    
+        const embed = pollManager.buildPollEmbed(id);
+    
+        message.channel.send(embed).then(embedMessage => {
+            poll.populateReactions(embedMessage);
+        }).catch(console.error);
+
     }
 
 }
