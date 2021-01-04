@@ -1,6 +1,6 @@
 import { Message, MessageEmbed, MessageReaction } from "discord.js";
 import { Poll } from "./poll";
-import { convertEmojiToNumber } from '../tools';
+import { convertEmojiToNumber, isTrashEmoji } from '../tools';
 
 export class ApprovalPoll extends Poll {
 
@@ -49,29 +49,22 @@ export class ApprovalPoll extends Poll {
         return embed;
     }
 
-    sendResultsEmbed(message: Message): void {
-        const embed = this.buildResultsEmbed();
-
-        message.channel.send(embed).then(resultsMessage => {
-            if (this.resultsMessage) {
-                this.resultsMessage.delete().catch(console.error);
-            }
-            this.resultsMessage = resultsMessage;
-        }).catch(console.error);
-    }
-
     onReactionAdd(message: Message, messageReaction: MessageReaction, userID: string): void {
 
-        if (this.isTrashEmoji(messageReaction)) {
+        if (isTrashEmoji(messageReaction)) {
             // clear counts
             this.clearCounts(userID);
+
+            this.updateResultsMessage();
         } else {
             const num = convertEmojiToNumber(messageReaction.emoji.name);
     
-            if (num === undefined || num >= this.options.length) return;
-    
-            if (!this.counts.get(this.options[num]).includes(userID)) {
-                this.counts.get(this.options[num]).push(userID);
+            if (num != undefined) {
+                if (!this.counts.get(this.options[num]).includes(userID)) {
+                    this.counts.get(this.options[num]).push(userID);
+                }
+
+                this.updateResultsMessage();
             }
     
         }

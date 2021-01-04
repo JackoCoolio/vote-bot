@@ -48,6 +48,12 @@ export abstract class Poll {
         this.resultsMessage = message;
     }
 
+    updateResultsMessage(): void {
+        if (this.resultsMessage) {
+            this.resultsMessage.edit(this.buildResultsEmbed());
+        }
+    }
+
     populateReactions(message: Message) {
 
         message.react('🗑️').catch(console.error);
@@ -64,15 +70,6 @@ export abstract class Poll {
         }
 
         return embed;
-    }
-
-    /**
-     * Returns whether or not the reaction is a trash emoji.
-     * 
-     * @param messageReaction the MessageReaction object
-     */
-    protected isTrashEmoji(messageReaction: MessageReaction): boolean {
-        return messageReaction.emoji.name == '🗑️';
     }
 
     abstract buildPollEmbed(): MessageEmbed;
