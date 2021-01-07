@@ -94,7 +94,20 @@ export function StartPollCommand(state: CommandState): void {
         case 'ranked-choice':
         case 'rc':
 
-            poll = new RankedChoicePoll(title, options, 3);
+            const maxVotes = parameters.get('maxvotes');
+            if (maxVotes instanceof Array) {
+                message.channel.send('`maxvotes` must be a string!').then(res => {
+                    message.delete().catch(console.error);
+
+                    setTimeout(() => {
+                        res.delete().catch(console.error);
+                    }, 5000);
+                }).catch(console.error);
+
+                return;
+            }
+
+            poll = new RankedChoicePoll(title, options, Number.parseInt(maxVotes) || 3);
 
             break;
         default:
