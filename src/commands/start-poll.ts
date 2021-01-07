@@ -86,7 +86,7 @@ export function StartPollCommand(state: CommandState): void {
 
             break;
         case 'simple':
-            
+
             poll = new SimplePoll(title, options);
 
             break;
@@ -112,11 +112,13 @@ export function StartPollCommand(state: CommandState): void {
     if (poll) {
 
         const id = pollManager.addPoll(poll);
-    
+
         const embed = pollManager.buildPollEmbed(id);
-    
+
         message.channel.send(embed).then(embedMessage => {
             poll.populateReactions(embedMessage);
+
+            poll.setPollMessage(embedMessage);
         }).catch(console.error);
 
     }

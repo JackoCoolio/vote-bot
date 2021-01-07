@@ -17,6 +17,11 @@ export abstract class Poll {
     options: Array<string>;
 
     /**
+     * The Message that displays the poll.
+     */
+    pollMessage: Message;
+
+    /**
      * The Message that displays the results of the poll.
      */
     resultsMessage: Message;
@@ -40,12 +45,26 @@ export abstract class Poll {
         return this.options;
     }
 
+    getPollMessage(): Message {
+        return this.pollMessage;
+    }
+
     getResultsMessage(): Message {
         return this.resultsMessage;
     }
 
+    setPollMessage(message: Message): void {
+        this.pollMessage = message;
+    }
+
     setResultsMessage(message: Message): void {
         this.resultsMessage = message;
+    }
+
+    updatePollMessage(): void {
+        if (this.pollMessage) {
+            this.resultsMessage.edit(this.buildPollEmbed());
+        }
     }
 
     updateResultsMessage(): void {
