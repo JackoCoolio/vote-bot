@@ -5,6 +5,7 @@ dotenv.config();
 import { CommandManager } from './command';
 import { StartPollCommand } from './commands/start-poll';
 import { ResultsCommand } from './commands/results';
+import { DeleteCommand } from './commands/delete';
 import { PollManager } from './poll/pollmanager';
 
 const client = new Discord.Client();
@@ -15,6 +16,7 @@ const pollManagers = new Map<string, PollManager>();
 
 commandManager.registerCommand(['startpoll', 'start'], StartPollCommand);
 commandManager.registerCommand('results', ResultsCommand);
+commandManager.registerCommand('delete', DeleteCommand);
 
 client.on('ready', () => {
     client.guilds.cache.forEach(guild => {

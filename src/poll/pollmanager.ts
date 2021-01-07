@@ -38,6 +38,16 @@ export class PollManager {
         return this.polls.get(id);
     }
 
+    inactivatePoll(id: string) {
+        let poll = this.polls.get(id);
+        if (poll) {
+
+            // move poll from active to inactive poll array
+            this.polls.delete(id);
+            this.inactivePolls.set(id, poll);
+        }
+    }
+
     /**
      * Returns a list of all active Polls.
      * 
@@ -109,7 +119,7 @@ export class PollManager {
         embed.setFooter(`ID: ${id}`)
             .setAuthor('Vote Bot')
             .setDescription(embed.description + '\n\nUse 🗑️ to clear your vote(s).\n');
-        
+
         return embed;
 
     }
