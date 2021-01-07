@@ -3,6 +3,7 @@ import { ApprovalPoll } from "../poll/approval";
 import { SimplePoll } from '../poll/simple';
 import { PollManager } from '../poll/pollmanager';
 import { Poll } from "../poll/poll";
+import { RankedChoicePoll } from "../poll/ranked-choice";
 
 export function StartPollCommand(state: CommandState): void {
 
@@ -87,6 +88,13 @@ export function StartPollCommand(state: CommandState): void {
         case 'simple':
             
             poll = new SimplePoll(title, options);
+
+            break;
+        case 'ranked':
+        case 'ranked-choice':
+        case 'rc':
+
+            poll = new RankedChoicePoll(title, options, 3);
 
             break;
         default:
